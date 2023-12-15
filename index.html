@@ -1,51 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap"
+      rel="stylesheet"
+    />
     <title>ArchGuide</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Arch Linux installation guide</h1>
-    <h4 id="lazyh4">
-        Lazy Mode:
-    </h4>
-    <ol>
+    <h4 class="h4modes">Lazy Mode:</h4>
+    <ul>
+      <li><b>Update pacman</b> $ pacman -Syu</li>
+      <li><b>Install archinstall script</b> $ pacman -S archinstall</li>
+      <li><b>Run archinstall, configure it, install, easy</b> $ archinstall</li>
+    </ul>
+
+    <h4 class="h4modes">Typical Mode:</h4>
+    <ul>
         <li>
-            <b>Update pacman</b> $ pacman -Syu
+            <b class="sect">Setup Network! (If you're using ethernet/LAN cable then just plug in and skip these) otherwise: </b>
         </li>
         <li>
-            <b>Install archinstall script</b> $ pacman -S archinstall
+            <b>Run iwctl program</b> $ iwctl
         </li>
         <li>
-            <b>Run archinstall, configure it, install, easy</b> $ archinstall
+            <b>Get device</b> [iwd]#device list
         </li>
-    </ol>
-</body>
-<style>
+        <li>
+            <b>Scan for available networks</b> [iwd]# station (device-name) get-networks
+        </li>
+        <li>
+            <b>Finnaly, connect to the SSID(Network Name) you want to</b> [iwd]# station (device-name) connect (SSID)
+        </li>
+        <li>
+            <b>Exit iwctl program </b> [iwd]# exit 
+        </li>
+        <li>
+            <b class="sect">Formatting partitions (If you're using SSD, then type /dev/nvme0n1 after cfdisk)</b>
+        </li>
+        <li>
+            <b>Run cfdisk program</b> $ cfdisk
+        </li>
+        <li>
+            <b class="sect">Delete all partitions using [delete], select with arrows up and down and menu with right and left</b>
+        </li>
+        <li>
+            <b class="sect">Then create 3 partitions using [new], with spaces: 100M, 4G, and then the rest of the free space</b>
+        </li>
+        <li>
+            <b class="sect">Once done, select and enter [write], and then quit the program using [quit]</b>
+        </li>
+        <li>
+            <b>check disk and partitions status</b> $ lsblk
+        </li>
+        <li>
+            <b class="sect">You should now see either sda with sda1,2,3 and its size or nvme0n1 with its size</b>
+        </li>
+        <li>
+            <b class="sect">depending if you use a SSD or hard drive</b>
+        </li>
+        <li>
+            <b>then make filesystem of ext4 to root partition (the rest of free space one)</b> $ mkfs.ext4 /dev/(root-partition)
+        </li>
+        <li>
+            <b>then make filesystem of fat32 to boot partitions (the 100M one) </b> $ mkfs.fat -F 32 /dev/(boot-partition)
+        </li>
+        <li>
+            <b>then make swap (the 4G one) </b> $ mkswap /dev/(swap-partition)
+        </li>
+        <li>
+            <b class="sect">Mount partitions!</b>
+        </li>
+        <li>
+            <b>mount the root partition</b> $ mount /dev/(root-partition) /mount
+        </li>
+        <li>
+            <b>make directory for boot partition</b> $ mkdir -p /mnt/boot/efi
+        </li>
+        <li>
+            <b>mount the boot partition</b> $ mount /dev/(boot-partition) /mnt/boot/efi
+        </li>
+        <li>
+            <b>acitvate the swap partition</b> $ swapon /dev/(swap-partition)
+        </li>
+        <li>
+            <b>now check the partition status again and verify if it's corret</b> lsblk
+        </li>
+        <li>
+            <b class="sect">Now you should see the partitions and what it is mounted to</b>
+        </li>
+        <li>
+            <b class="sect">Installing base packages</b> $ pacstrap -K /mnt base linux linux-firmware sof-firmware grub efibootmgr nano networkmanager
+        </li>
+
+
+    </ul>
+  </body>
+  <style>
     * {
-        border: 0;
-        margin: 0;
-        padding: 0;
-        font-family: "Source Code Pro";
-        font-size: 1.25vw;
-        background-color: black;
+      border: 0;
+      margin: 0;
+      padding: 0;
+      font-family: "Source Code Pro";
+      font-size: 1.25vw;
+      background-color: black;
+      margin-left: 1vw;
+      margin-top: 1vh;
     }
 
-    h1, h4, ol, li {
-        color: white;
+    h1,h4 {
+      color: #ffff00;
     }
 
-    #lazyh4 {
-        margin-top: 5vh;
-        margin-bottom: 6.5vh;
+    .h4modes {
+      margin-top: 5vh;
+      margin-bottom: 7vh;
     }
 
+    .sect {
+        color: #00FF00;
+    }
     li {
-        margin-bottom: 3.75vh;
+      margin-bottom: 3.75vh;
+      color: #00ffff;
     }
-</style>
+
+    b {
+      color: #ff2a6a;
+    }
+  </style>
 </html>
